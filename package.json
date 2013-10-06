@@ -1,0 +1,39 @@
+{
+  "name": "karma-msbuild-reporter",
+  "version": "0.2.0",
+  "description": "A Karma plugin. Report results for MSBuild / Visual Studio.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/david-driscoll/karma-msbuild-reporter.git"
+  },
+  "keywords": [
+    "karma-plugin",
+    "karma-reporter",
+    "msbuild"
+  ],
+  "author": "David Driscoll<david.driscoll@gmail.com>",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "sinon": "*",
+    "sinon-chai": "*",
+    "grunt-simple-mocha": "~0.4",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.2.0",
+    "grunt-bump": "~0.0.11",
+    "grunt-npm": "~0.0.2",
+    "grunt-auto-release": "~0.0.4"
+  },
+  "peerDependencies": {
+    "karma": ">=0.9"
+  },
+  "license": "MIT",
+  "contributors": [
+    "David Driscoll<david.driscoll@gmail.com>"
+  ]
+}
