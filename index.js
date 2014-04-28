@@ -40,7 +40,7 @@ var MSBuildReporter = function(baseReporterDecorator) {
   this.BROWSER_END   = 'browserEnd name=\'%s\'';
 
   this.onRunStart = function(browsers) {
-    var self = this;
+      var self = this;
     this.browserResults = {};
     browsers.forEach(function(browser) {
       self.browserResults[browser.id] = {
@@ -49,6 +49,15 @@ var MSBuildReporter = function(baseReporterDecorator) {
         lastSuite : null
       };
     });
+  };
+
+  this.onBrowserStart = function (browser) {
+      var self = this;
+      self.browserResults[browser.id] = {
+          name: browser.name,
+          log: [],
+          lastSuite: null
+      };
   };
 
   this.specSuccess = function(browser, result) {
