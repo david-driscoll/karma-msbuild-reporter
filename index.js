@@ -1,20 +1,20 @@
 var util = require('util');
 
-var escapeMessage = function (message) {
-  if(message === null || message === undefined) {
+var escapeMessage = function(message) {
+  if (message === null || message === undefined) {
     return '';
   }
 
   return message.toString().
-    replace(/\|/g, '||').
-    replace(/\'/g, '|\'').
-    replace(/\n/g, '|n').
-    replace(/\r/g, '|r').
-    replace(/\u0085/g, '|x').
-    replace(/\u2028/g, '|l').
-    replace(/\u2029/g, '|p').
-    replace(/\[/g, '|[').
-    replace(/\]/g, '|]');
+  replace(/\|/g, '||').
+  replace(/\'/g, '|\'').
+  replace(/\n/g, '|n').
+  replace(/\r/g, '|r').
+  replace(/\u0085/g, '|x').
+  replace(/\u2028/g, '|l').
+  replace(/\u2029/g, '|p').
+  replace(/\[/g, '|[').
+  replace(/\]/g, '|]');
 };
 
 var formatMessage = function() {
@@ -26,38 +26,36 @@ var formatMessage = function() {
   return util.format.apply(null, args) + '\n';
 };
 
-
 var MSBuildReporter = function(baseReporterDecorator) {
   baseReporterDecorator(this);
 
-  this.TEST_IGNORED  = 'testIgnored name=\'%s\'';
-  this.SUITE_START   = 'testSuiteStarted name=\'%s\'';
-  this.SUITE_END     = 'testSuiteFinished name=\'%s\'';
-  this.TEST_START    = 'testStarted name=\'%s\'';
-  this.TEST_FAILED   = 'ERROR: testFailed name=\'%s\' message=\'FAILED\' details=\'%s\'';
-  this.TEST_END      = 'testFinished name=\'%s\' duration=\'%s\'';
-  this.BROWSER_START = 'browserStart name=\'%s\'';
-  this.BROWSER_END   = 'browserEnd name=\'%s\'';
+  this.TEST_IGNORED = 'testIgnored name=\'%s\'';
+  this.SUITE_START = 'testSuiteStarted name=\'%s\'';
+  this.SUITE_END = 'testSuiteFinished name=\'%s\'';
+  this.TEST_START = 'testStarted name=\'%s\'';
+  this.TEST_FAILED = 'ERROR: testFailed name=\'%s\' message=\'FAILED\' details=\'%s\'';
+  this.TEST_END = 'testFinished name=\'%s\' duration=\'%s\'';
+  this.BLOCK_OPENED = 'blockOpened name=\'%s\'';
+  this.BLOCK_CLOSED = 'blockClosed name=\'%s\'';
 
-  this.onRunStart = function(browsers) {
-      var self = this;
-    this.browserResults = {};
-    browsers.forEach(function(browser) {
-      self.browserResults[browser.id] = {
-        name: browser.name,
-        log : [],
-        lastSuite : null
-      };
-    });
+  var reporter = this;
+
+  var initializeBrowser = function(browser) {
+    reporter.browserResults[browser.id] = {
+      name: browser.name,
+      log: [],
+      lastSuite: null
+    }
   };
 
-  this.onBrowserStart = function (browser) {
-      var self = this;
-      self.browserResults[browser.id] = {
-          name: browser.name,
-          log: [],
-          lastSuite: null
-      };
+  this.onRunStart = function(browsers) {
+    this.browserResults = {}
+    // Support Karma 0.10 (TODO: remove)
+    browsers.forEach(initializeBrowser)
+  };
+
+  this.onBrowserStart = function(browser) {
+    initializeBrowser(browser)
   };
 
   this.specSuccess = function(browser, result) {
@@ -90,21 +88,27 @@ var MSBuildReporter = function(baseReporterDecorator) {
     Object.keys(this.browserResults).forEach(function(browserId) {
       var browserResult = self.browserResults[browserId];
       var log = browserResult.log;
-      if(browserResult.lastSuite) {
+      if (browserResult.lastSuite) {
         log.push(formatMessage(self.SUITE_END, browserResult.lastSuite));
       }
-      self.write(formatMessage(self.BROWSER_START, browserResult.name));
+      self.write(formatMessage(self.BLOCK_OPENED, browserResult.name));
       self.write(log.join(''));
-      self.write(formatMessage(self.BROWSER_END, browserResult.name));
+      self.write(formatMessage(self.BLOCK_CLOSED, browserResult.name));
     });
   };
 
   this.getLog = function(browser, result) {
     var browserResult = this.browserResults[browser.id];
-    var suiteName = result.suite.join(' ');
+    var suiteName = browser.name;
+    var moduleName = result.suite.join(' ');
+
+    if (moduleName) {
+      suiteName = moduleName.concat('.', suiteName);
+    }
+
     var log = browserResult.log;
-    if(browserResult.lastSuite !== suiteName) {
-      if(browserResult.lastSuite) {
+    if (browserResult.lastSuite !== suiteName) {
+      if (browserResult.lastSuite) {
         log.push(formatMessage(this.SUITE_END, browserResult.lastSuite));
       }
       browserResult.lastSuite = suiteName;
