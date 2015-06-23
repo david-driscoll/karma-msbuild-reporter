@@ -16,10 +16,6 @@
     "msbuild"
   ],
   "author": "David Driscoll<david.driscoll@gmail.com>",
-  "contributors": [{
-    "name": "Michael Hanney",
-    "email": "michaelhanney.com@gmail.com"
-  }],
   "dependencies": {},
   "devDependencies": {
     "mocha": "*",
@@ -37,7 +33,11 @@
     "karma": ">=0.12"
   },
   "license": "MIT",
-  "contributors": [
-    "David Driscoll<david.driscoll@gmail.com>"
-  ]
+  "contributors": [{
+    "name": "David Driscoll",
+    "email": "david.driscoll@gmail.com"
+  }, {
+    "name": "Michael Hanney",
+    "email": "michaelhanney.com@gmail.com"
+  }]
 }
